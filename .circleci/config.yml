@@ -16,15 +16,34 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      # - run:
+      #     name: Create Cloudformation Stack
+      #     command: |
+      #       aws cloudformation create-stack \
+      #       --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \                                   
+      #       --template-file ./template.yml \
+      #       --region us-east-1
+
       - run:
-          name: Create Cloudformation Stack
+          name: Deploying the backend Infrastructure
           command: |
-            aws cloudformation create-stack \
-            --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \                                   
-            --template-file ./template.yml \
-            --region us-east-1
-
-
+            aws cloudformation deploy \
+              --template-file ./template.yml \
+              --tags project="udacity" \
+              --tags Name="udacity-<< CIRCLE_WORKFLOW_ID:0:7 >>" \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
+              --parameter-overrides ID="<< CIRCLE_WORKFLOW_ID:0:5 >>"
+      - run:
+          name: Save Backend URL
+          when: on_success
+          command: |
+            BACKEND_API=$(aws ec2 describe-instances  \
+             --filters "Name=tag:Name,Values=backend-<< pipeline.parameters.workflow-id >>" \
+              --query "Reservations[*].Instances[*].PublicIpAddress" \
+              --output text)
+           
+            echo $BACKEND_API >>  ./inventory.txt  
+            
       # - run : 
       #     name: save Ec2 IP to inventory file --parameter-overrides "${CIRCLE_WORKFLOW_ID:0:5}" \  
       #     command: |
