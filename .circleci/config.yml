@@ -28,7 +28,8 @@ jobs:
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \          
-              --output text >> ./inventory.txt     --region us-east-1   
+              --output text >> ./inventory.txt  \
+              --region us-east-1   
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
