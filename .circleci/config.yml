@@ -33,7 +33,8 @@ jobs:
               --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text)            
-            echo $BACKEND_API >>  ./inventory.txt          
+            echo $BACKEND_API >>  ./inventory.txt 
+            echo $BACKEND_API          
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
