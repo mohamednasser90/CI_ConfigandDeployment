@@ -74,8 +74,8 @@ jobs:
             pwd
             cd .circleci/ansible
             ls -al
-            ansible-playbook -i inventory.txt configure-server.yml
-             ansible-playbook -i ./inventory.txt ./main.yml
+            ansible-playbook -i inventory.txt main.yml
+           
 #aws cloudformation delete-stack --stack-name 
 workflows:
   # Name the workflow "welcome"
