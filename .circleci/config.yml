@@ -140,6 +140,6 @@ workflows:
       - configure_infrastructure :
           requires:
             - create_infrastructure
-            - get_instance_ip
+            # - get_instance_ip
       - smoke_test      
       
