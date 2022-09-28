@@ -16,63 +16,24 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      # - run:
-      #     name: Create Cloudformation Stack
-      #     command: |
-      #       aws cloudformation create-stack \
-      #       --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \                                   
-      #       --template-file ./template.yml \
-      #       --region us-east-1
-
       - run:
-          name: Deploying the backend Infrastructure
+          name: Create Cloudformation Stack
           command: |
             aws cloudformation deploy \
-              --template-file ./template.yml \             
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
+              --template-file ./template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
+
       - run:
           name: Save Backend URL
           when: on_success
           command: |
             BACKEND_API=$(aws ec2 describe-instances  \
-             --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text)
-           
-            echo $BACKEND_API >>  ./inventory.txt  
             
-      # - run : 
-      #     name: save Ec2 IP to inventory file --parameter-overrides "${CIRCLE_WORKFLOW_ID:0:5}" \  
-      #     command: |
-      #       aws ec2 describe-instances \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \                  
-      #         --output text >> ./inventory.txt  \
-      #         --region us-east-1    # --tags project=udapeople cat ~/project/.circleci/ansible/inventory.txt    
-
-  # get_instance_ip: 
-  #   docker:
-  #     - image: amazon/aws-cli
-  #   steps:     
-  #     # - run : 
-  #     #     name: save Ec2 IP to inventory file
-  #     #     command: |
-  #     #       aws ec2 describe-instances \
-  #     #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #     #         --filters "Name=tag:Project,Values=udacity" \                           
-  #     #         --output text >> ./inventory.txt  \
-  #     #         --region us-east-1   
-  #     #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              
-
-  #     - run:
-  #         name: Add back-end ip to ansible inventory
-  #         command: |
-  #           aws ec2 describe-instances \
-  #           --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #           --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
-  #           --output text >> ./inventory.txt
-                          
+            echo $BACKEND_API >>  ./inventory.txt          
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
@@ -94,8 +55,6 @@ jobs:
       - add_ssh_keys:
               # You can get this ID in the section where you registered the SSH Key
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
-     
-                  
       - run:
           name: Install Ansible
           command: |
@@ -104,25 +63,6 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              ansible-playbook -i ./inventory.txt ./main.yml
-
-  # Exercise: Smoke Testing
-  smoke_test:
-    docker:
-      - image: alpine:latest
-    steps:
-      - run: apk add --update curl
-      - run:
-          name: smoke test
-          command: |
-            URL="https://blog.udacity.com/"
-            # Test if website exists
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
-      # - destroy_environment                 
 #aws cloudformation delete-stack --stack-name 
 workflows:
   # Name the workflow "welcome"
@@ -134,12 +74,5 @@ workflows:
             branches:
               only:
                 - master
-      # - get_instance_ip:
-      #     requires:
-      #       - create_infrastructure          
-      - configure_infrastructure :
-          requires:
-            - create_infrastructure
-            # - get_instance_ip
-      - smoke_test      
+      - configure_infrastructure
       
