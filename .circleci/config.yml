@@ -22,6 +22,8 @@ jobs:
             aws cloudformation deploy \
               --template-file ./template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}" \
+              --tags project=udacity \              
               --region us-east-1
       # - run : 
       #     name: save Ec2 IP to inventory file
@@ -42,7 +44,18 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=udacity" \                           
               --output text >> ./inventory.txt  \
-              --region us-east-1             
+              --region us-east-1   
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+            --output text >> ./inventory.txt
+            cat ~/project/.circleci/ansible/inventory.txt                  
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
