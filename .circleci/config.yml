@@ -91,7 +91,7 @@ workflows:
               only:
                 - master
       - configure_infrastructure :
-          require:
+          requires:
             - create_infrastructure
       - smoke_test      
       
