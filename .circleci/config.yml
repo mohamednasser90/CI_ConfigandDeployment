@@ -16,6 +16,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum install tar gzip -y
       - run:
           name: Create Cloudformation Stack
           command: |
@@ -59,6 +60,9 @@ jobs:
       - add_ssh_keys:
               # You can get this ID in the section where you registered the SSH Key
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
+       # attach workspace
+      - attach_workspace:
+          at: ~/        
       - run:
           name: Install Ansible
           command: |
