@@ -19,10 +19,12 @@ jobs:
       - run:
           name: Create Cloudformation Stack
           command: |
-            aws cloudformation deploy \
-            --template-file ./template.yml \
+            aws cloudformation create-stack \
             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \                                   
+            --template-file ./template.yml \
             --region us-east-1
+
+
       # - run : 
       #     name: save Ec2 IP to inventory file --parameter-overrides "${CIRCLE_WORKFLOW_ID:0:5}" \  
       #     command: |
