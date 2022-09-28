@@ -21,11 +21,10 @@ jobs:
           command: |
             aws cloudformation deploy \
             --template-file ./template.yml \
-            --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-            --parameter-overrides "${CIRCLE_WORKFLOW_ID:0:5}" \                         
+            --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \                                   
             --region us-east-1
       # - run : 
-      #     name: save Ec2 IP to inventory file
+      #     name: save Ec2 IP to inventory file --parameter-overrides "${CIRCLE_WORKFLOW_ID:0:5}" \  
       #     command: |
       #       aws ec2 describe-instances \
       #         --query 'Reservations[*].Instances[*].PublicIpAddress' \                  
