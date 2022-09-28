@@ -27,9 +27,8 @@ jobs:
         name: save Ec2 IP to inventory file
         command: |
           aws ec2 describe-instances \
-          --query 'Reservations[*].Instances[*].PublicIpAddress' \
-          --filters "Name=tag:Project,Values=udacity" \
-          --output text >> ./inventory.txt        
+          --query 'Reservations[*].Instances[*].PublicIpAddress' \          
+          --output text >> ./inventory.txt     --region us-east-1   
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
