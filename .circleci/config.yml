@@ -10,7 +10,19 @@ orbs:
 
 
 jobs:
-  
+    
+  create_infrastructure: 
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file ./template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
   # create_infrastructure: 
   #   docker:
   #     - image: amazon/aws-cli
@@ -32,6 +44,14 @@ jobs:
       - add_ssh_keys:
               # You can get this ID in the section where you registered the SSH Key
               fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
+      - run : 
+          name: save Ec2 IP to inventory file
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Project,Values=udacity" \
+            --output text >> ./inventory.txt
+                  
       - run:
           name: Install Ansible
           command: |
@@ -40,16 +60,38 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              ansible-playbook -i ./inventory.txt ./main.yml
+
+  # Exercise: Smoke Testing
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          command: |
+            URL="https://blog.udacity.com/"
+            # Test if website exists
+            if curl -s --head ${URL} 
+            then
+              return 0
+            else
+              return 1
+            fi
+      # - destroy_environment                 
 #aws cloudformation delete-stack --stack-name 
 workflows:
   # Name the workflow "welcome"
   my_workflow:
     # Run the welcome/run job in its own container
     jobs:      
-      # - create_infrastructure:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
-      - configure_infrastructure
+      - create_infrastructure:
+          filters:
+            branches:
+              only:
+                - master
+      - configure_infrastructure :
+          require:
+            - create_infrastructure
+      - smoke_test      
       
