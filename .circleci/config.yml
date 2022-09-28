@@ -30,9 +30,9 @@ jobs:
             aws cloudformation deploy \
               --template-file ./template.yml \
               --tags project="udacity" \
-              --tags Name="udacity-<< CIRCLE_WORKFLOW_ID:0:7 >>" \
+              --tags Name="udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
-              --parameter-overrides ID="<< CIRCLE_WORKFLOW_ID:0:5 >>"
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
           name: Save Backend URL
           when: on_success
