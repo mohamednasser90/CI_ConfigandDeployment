@@ -1,6 +1,11 @@
 # Exercise - Rollback
 AWSTemplateFormatVersion: 2010-09-09
 Description: ND9991 C3 L4 
+Parameters:
+  ID:
+    Description: Unique identifier.
+    Type: String
+
 Resources:
   EC2Instance:
     Type: 'AWS::EC2::Instance'
@@ -11,8 +16,8 @@ Resources:
       ImageId: 'ami-09e67e426f25ce0d7' # you may need to find out what instance types are available in your region - use https://cloud-images.ubuntu.com/locator/ec2/
       InstanceType: t3.micro
       Tags:
-        - Key: Project
-          Value: udacity
+        - Key: Name
+          Value: !sub udacity-${ID}
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
