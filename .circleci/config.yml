@@ -28,9 +28,7 @@ jobs:
           name: Deploying the backend Infrastructure
           command: |
             aws cloudformation deploy \
-              --template-file ./template.yml \
-              --tags project="udacity" \
-              --tags Name="udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --template-file ./template.yml \             
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       - run:
@@ -52,28 +50,28 @@ jobs:
       #         --output text >> ./inventory.txt  \
       #         --region us-east-1    # --tags project=udapeople cat ~/project/.circleci/ansible/inventory.txt    
 
-  get_instance_ip: 
-    docker:
-      - image: amazon/aws-cli
-    steps:     
-      # - run : 
-      #     name: save Ec2 IP to inventory file
-      #     command: |
-      #       aws ec2 describe-instances \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --filters "Name=tag:Project,Values=udacity" \                           
-      #         --output text >> ./inventory.txt  \
-      #         --region us-east-1   
-      #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+  # get_instance_ip: 
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:     
+  #     # - run : 
+  #     #     name: save Ec2 IP to inventory file
+  #     #     command: |
+  #     #       aws ec2 describe-instances \
+  #     #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #     #         --filters "Name=tag:Project,Values=udacity" \                           
+  #     #         --output text >> ./inventory.txt  \
+  #     #         --region us-east-1   
+  #     #         --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               
 
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
-            --output text >> ./inventory.txt
+  #     - run:
+  #         name: Add back-end ip to ansible inventory
+  #         command: |
+  #           aws ec2 describe-instances \
+  #           --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #           --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+  #           --output text >> ./inventory.txt
                           
   # create_infrastructure: 
   #   docker:
@@ -136,9 +134,9 @@ workflows:
             branches:
               only:
                 - master
-      - get_instance_ip:
-          requires:
-            - create_infrastructure          
+      # - get_instance_ip:
+      #     requires:
+      #       - create_infrastructure          
       - configure_infrastructure :
           requires:
             - create_infrastructure
