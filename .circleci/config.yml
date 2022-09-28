@@ -24,7 +24,16 @@ jobs:
               --template-file ./template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1             
-
+       - run:
+          name: Retrive beckend ip (save it to ansible inventory)
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            
+            echo "[all]" >> .circleci/ansible/inventory.txt
+            echo "$BACKEND_PUBLIC_IP" >> .circleci/ansible/inventory.txt
       - run:
           name: Save Backend URL
           when: on_success
@@ -52,29 +61,29 @@ jobs:
   #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
   #             --region us-east-1
     # Exercise: Config and Deployment 54.236.42.43
-  configure_infrastructure: 
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-              # You can get this ID in the section where you registered the SSH Key
-              fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
-       # attach workspace
-      - attach_workspace:
-          at: ~/        
-      - run:
-          name: Install Ansible
-          command: |
-             apk add --update ansible
-      - run:
-          name: Run Playbook and Configure server
-          # command: |
-          command: |
-            pwd
-            cd .circleci/ansible
-            ls -al
-            ansible-playbook -i inventory.txt main.yml
+  # configure_infrastructure: 
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #             # You can get this ID in the section where you registered the SSH Key
+  #             fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
+  #      # attach workspace
+  #     - attach_workspace:
+  #         at: ~/        
+  #     - run:
+  #         name: Install Ansible
+  #         command: |
+  #            apk add --update ansible
+  #     - run:
+  #         name: Run Playbook and Configure server
+  #         # command: |
+  #         command: |
+  #           pwd
+  #           cd .circleci/ansible
+  #           ls -al
+  #           ansible-playbook -i inventory.txt main.yml
            
 #aws cloudformation delete-stack --stack-name 
 workflows:
@@ -87,7 +96,7 @@ workflows:
             branches:
               only:
                 - master
-      - configure_infrastructure:
-          requires:
-            - create_infrastructure
+      # - configure_infrastructure:
+      #     requires:
+      #       - create_infrastructure
       
