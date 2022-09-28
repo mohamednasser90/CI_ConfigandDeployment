@@ -36,7 +36,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-                          
+
       - run:
           name: Retrive beckend ip (save it to ansible inventory)
           command: |
@@ -44,7 +44,8 @@ jobs:
               --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            
+            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+            echo "${API_URL}"
             echo "[all]" >> .circleci/ansible/inventory.txt
             echo "$BACKEND_PUBLIC_IP" >> .circleci/ansible/inventory.txt
       - run:
