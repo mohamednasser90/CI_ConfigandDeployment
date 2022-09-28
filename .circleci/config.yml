@@ -27,8 +27,7 @@ jobs:
           name: save Ec2 IP to inventory file
           command: |
             aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \ 
-              --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values='*'"  \         
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \                  
               --output text >> ./inventory.txt  \
               --region us-east-1   
   # create_infrastructure: 
