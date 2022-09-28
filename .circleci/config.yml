@@ -31,7 +31,7 @@ jobs:
       - checkout
       - add_ssh_keys:
               # You can get this ID in the section where you registered the SSH Key
-              fingerprints: ["5e:f5:f0:bd:70:f5:2c:63:aa:ea:f2:cb:2d:f7:a1:a5:61:92:4a:2e"] 
+              fingerprints: ["f9:0f:73:86:1e:3a:48:58:bd:78:6b:15:d6:5a:6e:3e"] 
       - run:
           name: Install Ansible
           command: |
@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             ansible-playbook -i ./inventory ./main.yml
+             ansible-playbook -i ./inventory.txt ./main.yml
 #aws cloudformation delete-stack --stack-name 
 workflows:
   # Name the workflow "welcome"
