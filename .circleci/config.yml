@@ -22,11 +22,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
-             
-              
-
-
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"     
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -131,7 +127,25 @@ jobs:
           name: Configure server
           command: |
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt main.yml      
+            ansible-playbook -i inventory.txt main.yml 
+
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          command: |
+            URL="https://blog.udacity.com/"
+            if curl -s --head ${URL}
+            then 
+              return 0
+            else
+              return 1
+            fi    
+
+
            
 #aws cloudformation delete-stack --stack-name 
 workflows:
@@ -147,4 +161,5 @@ workflows:
       - configure_infrastructure:
           requires:
             - create_infrastructure
+      - smoke_test      
       
