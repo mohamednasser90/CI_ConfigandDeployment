@@ -118,7 +118,7 @@ jobs:
           name: Install Ansible
           command: |
              apk add --update ansible
-             pip install -y awscli
+             pip install awscli
 
       # - run:
       #     name: Run Playbook and Configure server
