@@ -22,8 +22,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-east-1  
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}" 
+              --region us-east-1                
+              --parameters ParameterKey=ID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:5} 
 
 
       - run:
@@ -46,7 +46,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
             - project/workflow_id.txt
-      # - run:
+      # - run: # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"
       #     name: Add back-end ip to ansible inventory
       #     command: |
       #       aws ec2 describe-instances \
