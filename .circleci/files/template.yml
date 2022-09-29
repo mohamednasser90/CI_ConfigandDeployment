@@ -16,7 +16,7 @@ Resources:
       InstanceType: t3.micro
       Tags:
         - Key: Name
-          Value: !sub udacity-${ID}
+          Value: !Sub udacity-${ID}
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
