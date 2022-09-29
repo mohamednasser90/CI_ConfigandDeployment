@@ -1,9 +1,8 @@
-# Exercise - Rollback
 AWSTemplateFormatVersion: 2010-09-09
 Description: ND9991 C3 L4 
 Parameters:
   ID:
-    Description: Unique Identifier.
+    Description: Unique identifier.
     Type: String
 
 Resources:
