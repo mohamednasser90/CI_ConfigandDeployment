@@ -117,9 +117,9 @@ jobs:
       - run:
           name: Install Ansible
           command: |
-             apk add --update ansible
-             pip install --upgrade pip
-             pip install awscli
+             apk add --update ansible awscli
+            #  pip install --upgrade pip
+            #  pip install awscli
 
       # - run:
       #     name: Run Playbook and Configure server
@@ -146,8 +146,8 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      - run: apk add --update curl
-      - run: apk add --no-cache aws-cli
+      - run: apk add --update  --no-cache curl aws-cli
+      # - run: apk add --no-cache aws-cli
       - run:
           name: smoke test
           command: |
@@ -159,7 +159,7 @@ jobs:
               return 1
             fi    
       - destroy_environments   
-         
+
 
 
            
