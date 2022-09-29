@@ -158,7 +158,8 @@ jobs:
             else
               return 1
             fi    
-      - destroy_environments      
+      - destroy_environments   
+         
 
 
            
