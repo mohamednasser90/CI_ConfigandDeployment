@@ -9,7 +9,7 @@ orbs:
 # Orchestrate or schedule a set of jobs
 # reusable job code
 commands:
-  destroy_infrastructure:
+  destroy_environments:
     steps:
       - run:
           name: destroy evnironment
@@ -50,7 +50,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
             - project/workflow_id.txt
-      - destroy_infrastructure
+      - destroy_environments
 
       # - run:   --parameters ParameterKey=ID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:5}   --region us-east-1  
       #     name: Add back-end ip to ansible inventory
@@ -139,7 +139,7 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt main.yml 
-      - destroy_infrastructure      
+      - destroy_environments      
 
   smoke_test:
     docker:
@@ -157,7 +157,7 @@ jobs:
             else
               return 1
             fi    
-      - destroy_infrastructure      
+      - destroy_environments      
 
 
            
