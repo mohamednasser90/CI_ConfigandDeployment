@@ -117,8 +117,8 @@ jobs:
       - run:
           name: Install Ansible
           command: |
-             apk add --update   ansible            
-             pip3 install awscli
+             apk add --update   --no-cache  ansible       curl       gzip tar aws-cli  
+            #  pip3 install awscli
  #  tar gzip aws-cli
             #  pip install --upgrade pip
       # - run:
