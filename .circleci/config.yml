@@ -106,10 +106,10 @@ jobs:
        # attach workspace
       - attach_workspace:
           at: ~/        
-      # - run:
-      #     name: Install Ansible
-      #     command: |
-      #        apk add --update ansible
+      - run:
+          name: Install Ansible
+          command: |
+             apk add --update ansible
       # - run:
       #     name: Run Playbook and Configure server
       #     # command: |
@@ -119,11 +119,11 @@ jobs:
       #       ls -al
       #       ansible-playbook -i inventory.txt main.yml
 
-      - run:
-          name: Install dependencies
-          command: |
-            pip install --user ansible 
-            pip install awscli
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       pip install --user ansible 
+      #       pip install awscli
       - run:
           name: Configure server
           command: |
