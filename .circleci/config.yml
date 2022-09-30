@@ -23,7 +23,7 @@ commands:
           name: destroy  environment
           when: on_fail          
           command: |
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
 jobs:    
   create_infrastructure: 
     docker:
@@ -36,13 +36,13 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/template.yml \
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"     
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"     
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             Server_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:5}" \
+              --filters "Name=tag:Name,Values=udacity-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo $Server_IP >> .circleci/ansible/inventory.txt
@@ -159,7 +159,7 @@ jobs:
       - run:
           name: smoke test
           command: |
-            URL="https://blog.udacity.comm/"
+            URL="https://blog.udacity.com/"
             if curl -s --head ${URL}
             then 
               return 0
@@ -181,7 +181,7 @@ jobs:
           name: Execute bucket.yml - Create Cloudformation Stack
           command: |
             aws cloudformation deploy \
-            --template-file bucket.yml \
+            --template-file .circleci/files/bucket.yml \
             --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7} \
             --parameter-overrides MyBucketName="mybucket-${CIRCLE_WORKFLOW_ID:0:7}"
       # Uncomment the step below if yoou wish to upload all contents of the current directory to the S3 bucket
@@ -218,7 +218,7 @@ jobs:
           name: Execute cloudfront.yml
           command: |
             aws cloudformation deploy \
-            --template-file cloudfront.yml \
+            --template-file .circleci/files/cloudfront.yml \
             --stack-name production-distro \
             --parameter-overrides PipelineID="mybucket-${CIRCLE_WORKFLOW_ID:0:7}" 
   # Exercise: Promote to Production - Job 4
